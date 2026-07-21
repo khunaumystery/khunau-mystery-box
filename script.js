@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.setAttribute('data-category', cat.id);
             card.innerHTML = `
                 <div class="cat-image-wrapper">
-                    <img src="products/${cat.file}" alt="${cat.name}" class="cat-img">
+                   <img src="${cat.file}" alt="${cat.name}" class="cat-img">
                 </div>
                 <h3>${cat.name}</h3>
             `;
