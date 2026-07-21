@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KhunAuMysteryBox - ร้านของเล่นสุดมหัศจรรย์</title>
+    <!-- We will rely on the standard Impact font -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Sticky Navbar -->
+    <nav class="navbar">
+        <div class="logo" id="nav-logo">
+            <img src="logo_new.jpg" alt="KhunAu Mystery Box" class="logo-img">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" class="nav-link active" data-target="view-home">หน้าแรก</a></li>
+            <li><a href="#" class="nav-link" data-target="view-shop">สินค้าทั้งหมด</a></li>
+        </ul>
+        <div class="nav-controls">
+            <div class="search-container">
+                <input type="text" id="search-input" class="search-input" placeholder="ค้นหาของเล่น... 🔍">
+            </div>
+            <button class="dark-mode-toggle" id="dark-mode-toggle" title="สลับโหมดกลางคืน">
+                <span class="moon-icon">🌙</span>
+                <span class="sun-icon hidden">☀️</span>
+            </button>
+            <div class="cart-icon-wrapper" id="cart-btn">
+                <span class="cart-icon">🛒</span>
+                <span class="cart-badge" id="cart-badge">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN VIEWS CONTAINER -->
+    <main id="main-content">
+
+        <!-- ================= HOME VIEW ================= -->
+        <div id="view-home" class="view-section active">
+            <!-- Mystery Box Interactive Widget -->
+            <section class="mystery-section">
+                <div class="mystery-container">
+                    <div class="mystery-text">
+                        <h2>อยากลอง <span class="text-purple">เสี่ยงดวงไหม?</span></h2>
+                        <p>คลิกที่กล่องวิเศษเพื่อเปิดดูของเล่นเซอร์ไพรส์ประจำวันในราคาสุดพิเศษ!</p>
+                    </div>
+                    <div class="mystery-box-wrapper" id="mystery-box">
+                        <div class="box-lid">🎁</div>
+                        <div class="box-glow"></div>
+                        <div class="revealed-item hidden" id="mystery-reveal">
+                            <span class="text-2xl">🎉</span>
+                            <h4>โค้ดส่งฟรีของคุณคือ:</h4>
+                            <p id="free-shipping-code" class="text-3xl font-bold my-2"
+                                style="color: var(--purple); font-size: 1.8rem;">XXXXX</p>
+                            <p style="font-size: 0.9rem; margin-top: 0.5rem;">นำโค้ดนี้แจ้งแอดมินรับสิทธิ์ส่งฟรี!</p>
+                            <div class="countdown-container"
+                                style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed #cbd5e1;">
+                                <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 0.2rem;">
+                                    กดรับใหม่ได้ในอีก</p>
+                                <p id="mystery-countdown"
+                                    style="font-size: 1.1rem; color: #ef4444; font-weight: bold; margin: 0;">10:00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Category Grid -->
+            <section class="categories">
+                <h2 class="section-title">ช้อปตาม <span class="text-blue">ความสนุก</span></h2>
+                <div class="category-grid" id="home-categories-grid">
+                    <!-- Categories injected via JS -->
+                </div>
+            </section>
+
+            <!-- Best Sellers -->
+            <section class="best-sellers bg-light-blue">
+                <!-- Wavy Divider Top -->
+                <div class="wave-divider top">
+                    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"
+                        preserveAspectRatio="none">
+                        <path
+                            d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V95.8C50.28,103.49,101.4,111,152.5,110.26,210.36,109.35,268.45,86.2,321.39,56.44Z"
+                            class="shape-fill-white"></path>
+                    </svg>
+                </div>
+
+                <h2 class="section-title">สินค้า <span class="text-orange">ขายดีของเรา</span></h2>
+                <div class="product-grid" id="home-products">
+                    <!-- Products injected via JS -->
+                </div>
+            </section>
+
+        </div>
+
+        <!-- ================= SHOP LISTING VIEW ================= -->
+        <div id="view-shop" class="view-section hidden">
+            <div class="shop-header">
+                <h1>คลัง <span class="text-blue">ของเล่น</span></h1>
+            </div>
+            <div class="shop-container">
+                <!-- Sidebar Filters -->
+
+                <!-- Product Grid -->
+                <div class="shop-main">
+                    <div class="product-grid" id="shop-products">
+                        <!-- Products injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Product Detail Modal -->
+    <div class="modal-overlay hidden" id="product-modal-overlay"></div>
+    <div class="product-modal hidden" id="product-modal">
+        <button class="close-modal" id="close-modal">✖</button>
+        <div class="modal-content">
+            <div class="modal-gallery">
+                <div class="main-image bg-yellow" id="modal-img">🧸</div>
+            </div>
+            <div class="modal-info">
+                <h2 id="modal-title">ชื่อสินค้า</h2>
+                <div class="reviews">⭐⭐⭐⭐⭐ <span>(42 รีวิว)</span></div>
+                <div class="price" id="modal-price">฿590</div>
+                <div class="stock-status">🚨 เหลือเพียง <span class="text-orange">3 ชิ้น</span> ในกล่องของเล่น!</div>
+
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="desc">รายละเอียด</button>
+                    <button class="tab-btn" data-tab="specs">ข้อมูลจำเพาะ</button>
+                </div>
+                <div class="tab-content" id="tab-desc">
+                    ของเล่นวิเศษที่จะสร้างความสุขให้กับทุกคน นุ่มนิ่ม น่ากอด และเต็มไปด้วยความประหลาดใจ!
+                </div>
+                <div class="tab-content hidden" id="tab-specs">
+                    อายุ: 3+ <br> วัสดุ: ผ้าฝ้ายนุ่มดุจปุยเมฆ <br> แบตเตอรี่: ไม่ต้องใช้ (ขับเคลื่อนด้วยจินตนาการ)
+                </div>
+
+                <button class="btn btn-large btn-purple w-100" id="modal-add-to-cart">เพิ่มสินค้า 💸</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confetti Container -->
+    <div id="confetti-container"></div>
+
+    <!-- Bottom Cart Bar -->
+    <div id="bottom-cart-bar" class="bottom-cart-bar">
+        <div class="bottom-cart-info">
+            <span class="cart-icon-small">🛒</span>
+            <span id="bottom-cart-count">0</span> ชิ้น |
+            <span class="total-text">ยอดรวม: </span><span id="bottom-cart-total"
+                class="font-bold text-orange">฿0.00</span>
+        </div>
+        <div class="bottom-cart-actions">
+            <button class="btn btn-sm btn-outline" id="bottom-cart-clear">ล้างตะกร้า</button>
+            <button class="btn btn-sm btn-purple" id="bottom-cart-checkout">ชำระเงิน</button>
+        </div>
+    </div>
+
+    <!-- Floating LINE Contact Widget -->
+    <div class="line-widget-container" id="line-widget">
+        <div class="line-widget-card" id="line-widget-card">
+            <button class="line-widget-close" id="line-widget-close" title="ปิด">×</button>
+            <div class="line-widget-header">
+                <div class="line-avatar">🧸</div>
+                <div class="line-header-info">
+                    <h4>แอดมิน KhunAu</h4>
+                    <p>ออนไลน์ • ตอบกลับทันที</p>
+                </div>
+            </div>
+            <div class="line-widget-body">
+                <p class="line-msg-bubble">สวัสดีครับ! สอบถามข้อมูลสินค้าหรือต้องการทำรายการโอนเงินแจ้งสลิป
+                    สามารถแจ้งทางไลน์ได้เลยครับ 💖</p>
+                <div class="line-action-info">
+                    <div class="line-action-item">
+                        <span>กดคลิก👉แอดไลน์เพื่อสอบถามข้อมูล</span>
+                    </div>
+                    <div class="line-action-item">
+                        <span>📦แจ้งสลิปโอนเงินเพื่อจัดส่งสินค้า📦</span>
+                    </div>
+                </div>
+                <a href="https://lin.ee/U2AkpML" target="_blank" class="line-widget-btn">
+                    <img src="OJ1/line.png" alt="LINE Logo" class="line-btn-icon">
+                    <span>คุยกับแอดมินทาง LINE</span>
+                </a>
+            </div>
+        </div>
+        <button class="line-widget-toggle" id="line-widget-toggle" title="ติดต่อเราทาง LINE"
+            style="background: transparent; box-shadow: none;">
+            <span class="line-toggle-badge">1</span>
+            <div class="line-toggle-icon-wrapper" style="width: 100%; height: 100%;">
+                <img src="OJ1/line.png" alt="LINE" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+        </button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
