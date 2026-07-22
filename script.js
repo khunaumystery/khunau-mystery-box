@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Elements ---
-    const navLinks = document.querySelectorAll('.nav-link');
+    const navLinks = document.querySelectorAll('.tab-item');
     const views = document.querySelectorAll('.view-section');
     const homeProductsContainer = document.getElementById('home-products');
     const shopProductsContainer = document.getElementById('shop-products');
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.setAttribute('data-category', cat.id);
             card.innerHTML = `
                 <div class="cat-image-wrapper">
-                   <img src="${cat.file}" alt="${cat.name}" class="cat-img">
+                    <img src="${cat.file}" alt="${cat.name}" class="cat-img">
                 </div>
                 <h3>${cat.name}</h3>
             `;
