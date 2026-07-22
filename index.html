@@ -10,16 +10,12 @@
 </head>
 
 <body>
-    <!-- Sticky Navbar -->
-    <nav class="navbar">
+    <!-- Top Header -->
+    <header class="top-header">
         <div class="logo" id="nav-logo">
             <img src="logo_new.jpg" alt="KhunAu Mystery Box" class="logo-img">
         </div>
-        <ul class="nav-links">
-            <li><a href="#" class="nav-link active" data-target="view-home">หน้าแรก</a></li>
-            <li><a href="#" class="nav-link" data-target="view-shop">สินค้าทั้งหมด</a></li>
-        </ul>
-        <div class="nav-controls">
+        <div class="header-controls">
             <div class="search-container">
                 <input type="text" id="search-input" class="search-input" placeholder="ค้นหาของเล่น... 🔍">
             </div>
@@ -27,12 +23,8 @@
                 <span class="moon-icon">🌙</span>
                 <span class="sun-icon hidden">☀️</span>
             </button>
-            <div class="cart-icon-wrapper" id="cart-btn">
-                <span class="cart-icon">🛒</span>
-                <span class="cart-badge" id="cart-badge">0</span>
-            </div>
         </div>
-    </nav>
+    </header>
 
     <!-- MAIN VIEWS CONTAINER -->
     <main id="main-content">
@@ -198,6 +190,18 @@
             </div>
         </button>
     </div>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="bottom-tab-bar" id="bottom-tab-bar">
+        <a href="#" class="tab-item active" data-target="view-home">
+            <span class="tab-icon">🏠</span>
+            <span class="tab-label">หน้าแรก</span>
+        </a>
+        <a href="#" class="tab-item" data-target="view-shop">
+            <span class="tab-icon">🧸</span>
+            <span class="tab-label">สินค้าทั้งหมด</span>
+        </a>
+    </nav>
 
     <script src="script.js"></script>
 </body>
