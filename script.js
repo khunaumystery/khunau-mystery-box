@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Elements ---
-    const navLinks = document.querySelectorAll('.nav-link');
+    const navLinks = document.querySelectorAll('.tab-item');
     const views = document.querySelectorAll('.view-section');
     const homeProductsContainer = document.getElementById('home-products');
     const shopProductsContainer = document.getElementById('shop-products');
@@ -131,10 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    document.getElementById('hero-cta').addEventListener('click', () => {
-        const shopLink = document.querySelector('[data-target="view-shop"]');
-        if (shopLink) shopLink.click();
-    });
 
     function updateBottomCartUI() {
         if (!bottomCartBar) return;
@@ -171,13 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (bottomCartCheckout) {
         bottomCartCheckout.addEventListener('click', () => {
             if (cart.length > 0) {
-                const savedUser = localStorage.getItem('khunAuUser');
-                if (!savedUser) {
-                    openAuthModal('signin');
-                    showAuthMessage('⚠️ กรุณาเข้าสู่ระบบก่อนทำการชำระเงินครับ!', 'error');
-                } else {
-                    window.open('checkout.html', '_blank');
-                }
+                window.open('checkout.html', '_blank');
             }
         });
     }
@@ -186,20 +176,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const lineWidgetToggle = document.getElementById('line-widget-toggle');
     const lineWidgetCard = document.getElementById('line-widget-card');
     const lineWidgetClose = document.getElementById('line-widget-close');
-
+    
     if (lineWidgetToggle && lineWidgetCard) {
+        // Toggle widget card open/close
         lineWidgetToggle.addEventListener('click', (e) => {
             e.stopPropagation();
             lineWidgetCard.classList.toggle('open');
+            // Hide notification badge when card is opened
             const badge = lineWidgetToggle.querySelector('.line-toggle-badge');
             if (badge) badge.style.display = 'none';
         });
+        
+        // Close widget card when clicking close button
         if (lineWidgetClose) {
             lineWidgetClose.addEventListener('click', (e) => {
                 e.stopPropagation();
                 lineWidgetCard.classList.remove('open');
             });
         }
+        
+        // Close widget card when clicking outside
         document.addEventListener('click', (e) => {
             if (!lineWidgetCard.contains(e.target) && !lineWidgetToggle.contains(e.target)) {
                 lineWidgetCard.classList.remove('open');
@@ -251,6 +247,10 @@ document.addEventListener('DOMContentLoaded', () => {
         container.querySelectorAll('.add-to-cart-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const t = e.target;
+                
+                // Play pop sound
+                if (typeof playPopSound === 'function') playPopSound();
+
                 addToCart({
                     id: t.getAttribute('data-id'),
                     name: t.getAttribute('data-name'),
@@ -258,6 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     emoji: t.getAttribute('data-emoji'),
                     color: t.getAttribute('data-color')
                 });
+
                 const originalText = t.textContent;
                 t.textContent = "เพิ่มแล้ว! ✓";
                 t.style.backgroundColor = 'var(--purple)';
@@ -275,10 +276,17 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-img').className = `main-image ${product.color}`;
         document.getElementById('modal-title').textContent = product.name;
         document.getElementById('modal-price').textContent = `฿${product.price}`;
-        modalAddToCart.onclick = () => { addToCart(product); };
+
+        modalAddToCart.onclick = () => {
+            addToCart(product);
+        };
+
         productModal.classList.remove('hidden');
         modalOverlay.classList.remove('hidden');
-        setTimeout(() => { productModal.classList.add('show'); }, 10);
+
+        setTimeout(() => {
+            productModal.classList.add('show');
+        }, 10);
     }
 
     function closeModalFunc() {
@@ -298,6 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', () => {
             tabBtns.forEach(b => b.classList.remove('active'));
             tabContents.forEach(c => c.classList.add('hidden'));
+
             btn.classList.add('active');
             document.getElementById(`tab-${btn.getAttribute('data-tab')}`).classList.remove('hidden');
         });
@@ -313,23 +322,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function startMysteryCountdown(endTime) {
         if (countdownInterval) clearInterval(countdownInterval);
+
         function updateTimer() {
             const now = Date.now();
             const remaining = endTime - now;
+
             if (remaining <= 0) {
                 clearInterval(countdownInterval);
                 localStorage.removeItem('mysteryBoxTimerEnd');
                 localStorage.removeItem('mysteryBoxCode');
+                
+                // Reset box state
                 mysteryBox.classList.remove('revealed');
                 mysteryReveal.classList.add('hidden');
                 boxOpened = false;
-                if (mysteryCountdownEl) mysteryCountdownEl.textContent = '10:00';
+                if (mysteryCountdownEl) {
+                    mysteryCountdownEl.textContent = '10:00';
+                }
                 return;
             }
+
             const minutes = Math.floor(remaining / 60000);
             const seconds = Math.floor((remaining % 60000) / 1000);
-            if (mysteryCountdownEl) mysteryCountdownEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            if (mysteryCountdownEl) {
+                mysteryCountdownEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
         }
+
         updateTimer();
         countdownInterval = setInterval(updateTimer, 1000);
     }
@@ -337,11 +356,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function checkActiveTimer() {
         const savedEndTime = localStorage.getItem('mysteryBoxTimerEnd');
         const savedCode = localStorage.getItem('mysteryBoxCode');
+
         if (savedEndTime && savedCode) {
             const endTime = parseInt(savedEndTime, 10);
             if (endTime > Date.now()) {
                 boxOpened = true;
-                if (freeShippingCodeEl) freeShippingCodeEl.textContent = savedCode;
+                if (freeShippingCodeEl) {
+                    freeShippingCodeEl.textContent = savedCode;
+                }
                 mysteryBox.classList.add('revealed');
                 mysteryReveal.classList.remove('hidden');
                 startMysteryCountdown(endTime);
@@ -354,22 +376,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (mysteryBox) {
         checkActiveTimer();
+
         mysteryBox.addEventListener('click', () => {
             if (boxOpened) return;
+            
+            // Play magic sound
+            if (typeof playMagicSound === 'function') playMagicSound();
+            
             mysteryBox.classList.add('shaking');
+
+            // Generate 5 char random alphanumeric code
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let code = '';
-            for (let i = 0; i < 6; i++) {
+            for (let i = 0; i < 5; i++) {
                 code += chars.charAt(Math.floor(Math.random() * chars.length));
             }
-            if (freeShippingCodeEl) freeShippingCodeEl.textContent = code;
+            if (freeShippingCodeEl) {
+                freeShippingCodeEl.textContent = code;
+            }
+
             setTimeout(() => {
                 mysteryBox.classList.remove('shaking');
                 mysteryBox.classList.add('revealed');
                 mysteryReveal.classList.remove('hidden');
                 createConfetti();
                 boxOpened = true;
-                const endTime = Date.now() + 10 * 60 * 1000;
+
+                // 10 minutes countdown
+                const duration = 10 * 60 * 1000; // 10 minutes in ms
+                const endTime = Date.now() + duration;
                 localStorage.setItem('mysteryBoxTimerEnd', endTime);
                 localStorage.setItem('mysteryBoxCode', code);
                 startMysteryCountdown(endTime);
@@ -381,6 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function createConfetti() {
         const colors = ['#FDE047', '#FB923C', '#7DD3FC', '#C084FC'];
         const container = document.body;
+
         for (let i = 0; i < 30; i++) {
             const confetti = document.createElement('div');
             confetti.style.position = 'fixed';
@@ -388,25 +424,36 @@ document.addEventListener('DOMContentLoaded', () => {
             confetti.style.height = '10px';
             confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+
             const startX = window.innerWidth / 2;
             const startY = window.innerHeight / 2;
+
             confetti.style.left = startX + 'px';
             confetti.style.top = startY + 'px';
             confetti.style.zIndex = 3000;
+
             container.appendChild(confetti);
+
             const angle = Math.random() * Math.PI * 2;
             const velocity = 10 + Math.random() * 15;
             const vx = Math.cos(angle) * velocity;
             const vy = Math.sin(angle) * velocity - 10;
-            let posX = startX, posY = startY, currentVy = vy, time = 0;
+
+            let posX = startX;
+            let posY = startY;
+            let currentVy = vy;
+            let time = 0;
+
             const animate = () => {
                 time++;
                 posX += vx;
                 currentVy += 0.5;
                 posY += currentVy;
+
                 confetti.style.left = posX + 'px';
                 confetti.style.top = posY + 'px';
                 confetti.style.transform = `rotate(${time * 10}deg)`;
+
                 if (posY < window.innerHeight + 20 && posX > -20 && posX < window.innerWidth + 20) {
                     requestAnimationFrame(animate);
                 } else {
@@ -422,205 +469,116 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.category-card').forEach(card => {
             card.addEventListener('click', () => {
                 const cat = card.getAttribute('data-category');
+
                 const shopLink = document.querySelector('[data-target="view-shop"]');
                 if (shopLink) shopLink.click();
-                renderProducts(productsData.filter(p => p.category === cat), shopProductsContainer);
+
+                let filteredProducts = productsData.filter(p => p.category === cat);
+                renderProducts(filteredProducts, shopProductsContainer);
+
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         });
     }
     setTimeout(attachCategoryCardListeners, 100);
 
-    // ============================================================
-    // --- AUTH SYSTEM ---
-    // ============================================================
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbySM-w6s4uCCbqMbFU1vv7Ys2lRIX17teAokrdOxPNb2dUm5PhOfrv8pch8-lSE_hEa/exec';
+    // --- Dark Mode Logic ---
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const sunIcon = document.querySelector('.sun-icon');
+    const moonIcon = document.querySelector('.moon-icon');
 
-    const authModal = document.getElementById('auth-modal');
-    const authOverlay = document.getElementById('auth-modal-overlay');
-    const closeAuthBtn = document.getElementById('close-auth-modal');
-    const navLoginBtn = document.getElementById('nav-login-btn');
-    const navSignupBtn = document.getElementById('nav-signup-btn');
-    const navAuthContainer = document.getElementById('nav-auth-container');
-
-    const signinForm = document.getElementById('signin-form');
-    const signupForm = document.getElementById('signup-form');
-    const authMsgEl = document.getElementById('auth-message');
-
-    const tabSigninBtn = document.getElementById('tab-signin-btn');
-    const tabSignupBtn = document.getElementById('tab-signup-btn');
-    const switchToSignup = document.getElementById('switch-to-signup');
-    const switchToSignin = document.getElementById('switch-to-signin');
-
-    function showAuthMessage(msg, type) {
-        if (!authMsgEl) return;
-        authMsgEl.textContent = msg;
-        authMsgEl.style.display = 'block';
-        if (type === 'error') {
-            authMsgEl.style.background = '#fee2e2';
-            authMsgEl.style.color = '#ef4444';
-            authMsgEl.style.border = '1px solid #fca5a5';
+    function setDarkMode(isDark) {
+        if (isDark) {
+            document.body.classList.add('dark-mode');
+            if(sunIcon) sunIcon.classList.remove('hidden');
+            if(moonIcon) moonIcon.classList.add('hidden');
+            localStorage.setItem('khunAuDarkMode', 'true');
         } else {
-            authMsgEl.style.background = '#dcfce7';
-            authMsgEl.style.color = '#15803d';
-            authMsgEl.style.border = '1px solid #86efac';
+            document.body.classList.remove('dark-mode');
+            if(sunIcon) sunIcon.classList.add('hidden');
+            if(moonIcon) moonIcon.classList.remove('hidden');
+            localStorage.setItem('khunAuDarkMode', 'false');
         }
     }
 
-    function clearAuthMessage() {
-        if (!authMsgEl) return;
-        authMsgEl.textContent = '';
-        authMsgEl.style.display = 'none';
+    if (localStorage.getItem('khunAuDarkMode') === 'true') {
+        setDarkMode(true);
     }
 
-    function switchTab(tab) {
-        clearAuthMessage();
-        if (tab === 'signin') {
-            signinForm.style.display = 'block';
-            signupForm.style.display = 'none';
-            tabSigninBtn.style.color = 'var(--purple)';
-            tabSigninBtn.style.borderBottom = '3px solid var(--purple)';
-            tabSignupBtn.style.color = '#94a3b8';
-            tabSignupBtn.style.borderBottom = '3px solid transparent';
-        } else {
-            signinForm.style.display = 'none';
-            signupForm.style.display = 'block';
-            tabSignupBtn.style.color = 'var(--purple)';
-            tabSignupBtn.style.borderBottom = '3px solid var(--purple)';
-            tabSigninBtn.style.color = '#94a3b8';
-            tabSigninBtn.style.borderBottom = '3px solid transparent';
-        }
-    }
-
-    function openAuthModal(tab = 'signin') {
-        if (!authModal || !authOverlay) return;
-        switchTab(tab);
-        authModal.style.display = 'block';
-        authOverlay.style.display = 'block';
-        setTimeout(() => { authModal.style.transform = 'translate(-50%,-50%) scale(1)'; }, 10);
-    }
-
-    function closeAuthModal() {
-        if (!authModal || !authOverlay) return;
-        authModal.style.transform = 'translate(-50%,-50%) scale(0.9)';
-        setTimeout(() => {
-            authModal.style.display = 'none';
-            authOverlay.style.display = 'none';
-            clearAuthMessage();
-        }, 300);
-    }
-
-    if (tabSigninBtn) tabSigninBtn.addEventListener('click', () => switchTab('signin'));
-    if (tabSignupBtn) tabSignupBtn.addEventListener('click', () => switchTab('signup'));
-    if (switchToSignup) switchToSignup.addEventListener('click', () => switchTab('signup'));
-    if (switchToSignin) switchToSignin.addEventListener('click', () => switchTab('signin'));
-    if (closeAuthBtn) closeAuthBtn.addEventListener('click', closeAuthModal);
-    if (authOverlay) authOverlay.addEventListener('click', closeAuthModal);
-    if (navLoginBtn) navLoginBtn.addEventListener('click', () => openAuthModal('signin'));
-    if (navSignupBtn) navSignupBtn.addEventListener('click', () => openAuthModal('signup'));
-
-    async function callGAS(action, data) {
-        try {
-            const res = await fetch(GAS_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action, ...data })
-            });
-            return await res.json();
-        } catch (err) {
-            // Fallback to localStorage mock
-            const users = JSON.parse(localStorage.getItem('khunAuMockUsers') || '[]');
-            if (action === 'signup') {
-                const exists = users.some(u => u.username.toLowerCase() === data.username.toLowerCase() || u.email.toLowerCase() === data.email.toLowerCase());
-                if (exists) return { success: false, message: 'ชื่อผู้ใช้หรืออีเมลนี้มีอยู่ในระบบแล้ว' };
-                users.push({ username: data.username, email: data.email, password: data.password });
-                localStorage.setItem('khunAuMockUsers', JSON.stringify(users));
-                return { success: true, message: 'สมัครสมาชิกสำเร็จ! (โหมดออฟไลน์)' };
-            } else {
-                const found = users.find(u => (u.username.toLowerCase() === data.username.toLowerCase() || u.email.toLowerCase() === data.username.toLowerCase()) && u.password === data.password);
-                if (found) return { success: true, message: 'เข้าสู่ระบบสำเร็จ!', user: { username: found.username, email: found.email } };
-                return { success: false, message: 'ชื่อผู้ใช้/อีเมล หรือรหัสผ่านไม่ถูกต้อง' };
-            }
-        }
-    }
-
-    function updateNavbarForUser(user) {
-        if (!navAuthContainer) return;
-        if (user) {
-            if (navSignupBtn) navSignupBtn.style.display = 'none';
-            navAuthContainer.innerHTML = `
-                <div style="display:flex; align-items:center; gap:0.7rem;">
-                    <span style="font-weight:bold; font-size:1rem;">👤 ${user.username}</span>
-                    <button id="logout-btn" style="background:#fee2e2; color:#ef4444; border:none; border-radius:8px; padding:0.35rem 0.7rem; font-weight:bold; cursor:pointer;">ออกจากระบบ</button>
-                </div>
-            `;
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                localStorage.removeItem('khunAuUser');
-                if (navSignupBtn) navSignupBtn.style.display = 'block';
-                updateNavbarForUser(null);
-            });
-        } else {
-            navAuthContainer.innerHTML = `<button id="nav-login-btn" style="border-radius:12px; font-weight:bold; padding:0.4rem 0.9rem; background-color:var(--purple); border:none; color:white; cursor:pointer; font-size:1rem;">🔑 เข้าสู่ระบบ</button>`;
-            document.getElementById('nav-login-btn').addEventListener('click', () => openAuthModal('signin'));
-        }
-    }
-
-    // Sign In Submit
-    if (signinForm) {
-        signinForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('signin-btn');
-            btn.disabled = true; btn.textContent = 'กำลังตรวจสอบ...';
-            clearAuthMessage();
-            const res = await callGAS('login', {
-                username: document.getElementById('signin-username').value,
-                password: document.getElementById('signin-password').value
-            });
-            if (res.success) {
-                localStorage.setItem('khunAuUser', JSON.stringify(res.user));
-                showAuthMessage('✅ ' + res.message, 'success');
-                setTimeout(() => { closeAuthModal(); updateNavbarForUser(res.user); createConfetti(); }, 1000);
-            } else {
-                showAuthMessage('❌ ' + res.message, 'error');
-            }
-            btn.disabled = false; btn.textContent = 'เข้าสู่ระบบ';
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('click', () => {
+            const isDark = document.body.classList.contains('dark-mode');
+            setDarkMode(!isDark);
         });
     }
 
-    // Sign Up Submit
-    if (signupForm) {
-        signupForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const pw = document.getElementById('signup-password').value;
-            const confirm = document.getElementById('signup-confirm').value;
-            if (pw !== confirm) { showAuthMessage('❌ รหัสผ่านไม่ตรงกัน', 'error'); return; }
-            const btn = document.getElementById('signup-btn');
-            btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
-            clearAuthMessage();
-            const res = await callGAS('signup', {
-                username: document.getElementById('signup-username').value,
-                email: document.getElementById('signup-email').value,
-                password: pw
-            });
-            if (res.success) {
-                showAuthMessage('✅ ' + res.message, 'success');
-                const savedUsername = document.getElementById('signup-username').value;
-                setTimeout(() => {
-                    switchTab('signin');
-                    document.getElementById('signin-username').value = savedUsername;
-                }, 1500);
-            } else {
-                showAuthMessage('❌ ' + res.message, 'error');
+    // --- Search Logic ---
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            
+            // Go to shop view if searching
+            const shopLink = document.querySelector('[data-target="view-shop"]');
+            const viewShop = document.getElementById('view-shop');
+            if (shopLink && viewShop && viewShop.classList.contains('hidden') && query.length > 0) {
+                shopLink.click();
             }
-            btn.disabled = false; btn.textContent = 'สมัครสมาชิก';
-        });
-    }
 
-    // Load saved user on page load
-    const savedUser = localStorage.getItem('khunAuUser');
-    if (savedUser) {
-        updateNavbarForUser(JSON.parse(savedUser));
+            const filtered = productsData.filter(p => p.name.toLowerCase().includes(query));
+            renderProducts(filtered, shopProductsContainer);
+        });
     }
 
 });
 
+// --- Sound Effects (Web Audio API) ---
+const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new AudioContextClass();
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+}
+
+window.playPopSound = function() {
+    try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.1);
+    } catch(e) { console.error('Audio error', e); }
+};
+
+window.playMagicSound = function() {
+    try {
+        initAudio();
+        const now = audioCtx.currentTime;
+        const freqs = [880, 1108, 1318, 1760]; // Magical chord
+        freqs.forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.3, now + 0.1 + (i * 0.1));
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6 + (i * 0.1));
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + (i * 0.1));
+            osc.stop(now + 0.6 + (i * 0.1));
+        });
+    } catch(e) { console.error('Audio error', e); }
+};
